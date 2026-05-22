@@ -1,0 +1,124 @@
+/**
+ * Editor-only visual treatment for `.prc-block-bit` spans (R7).
+ *
+ * Two-tier scheme:
+ *
+ * 1. `.prc-block-bit` (default) — token-pill treatment for state-driven text
+ *    bits (copyright, selectedGroupName, etc.). Matches the purple palette of
+ *    WP's block-bindings indicator so authors recognise the language: "this
+ *    highlighted text is dynamic." Editor-only; never escapes to the frontend.
+ *
+ * 2. `.prc-block-bit-icon-span` reset — icons are visual atoms, not text
+ *    tokens. The modifier class strips all pill chrome so the icon sits bare
+ *    among surrounding RichText. Any future visual bit should follow this
+ *    same pattern (add a `prc-block-bit-<name>` reset class).
+ */
+
+// ----------------------------------------------------------------------------
+// Token-pill default (text / state-driven bits)
+// ----------------------------------------------------------------------------
+
+.prc-block-bit {
+	background-color: rgba(96, 80, 220, 0.12);
+	color: rgb(72, 50, 199);
+	border-radius: 4px;
+	padding: 0 6px;
+	box-shadow: inset 0 -1px 0 rgba(96, 80, 220, 0.4);
+	transition:
+		background-color 120ms ease-out,
+		box-shadow 120ms ease-out;
+
+	&:hover,
+	&:focus,
+	&:focus-within {
+		background-color: rgba(96, 80, 220, 0.22);
+		box-shadow: inset 0 -1px 0 rgba(96, 80, 220, 0.7);
+	}
+
+	// Stronger contrast when the format boundary (cursor-selection highlight)
+	// is active on this span.
+	[data-rich-text-format-boundary] & {
+		background-color: rgba(96, 80, 220, 0.28);
+	}
+}
+
+// ----------------------------------------------------------------------------
+// Icon-span reset (visual / glyph bits)
+// ----------------------------------------------------------------------------
+
+// Icons are not text tokens — strip all pill chrome so the glyph sits
+// inline among surrounding text without visual noise.
+.prc-block-bit[data-prc-block-bit="prc-block-bits/icon-span"] {
+	// Use a single high-specificity rule that covers all states at once
+	// so hover/focus/boundary states can't re-apply the pill colours.
+	&,
+	&:hover,
+	&:focus,
+	&:focus-within {
+		background-color: transparent;
+		border-radius: 0;
+		padding: 0;
+		box-shadow: none;
+	}
+
+	[data-rich-text-format-boundary] & {
+		background-color: transparent;
+	}
+
+	// Collapse the %icon% placeholder text so it is invisible between
+	// the DOM tear-out (on each rich-text re-render) and the MutationObserver
+	// re-injecting the sprite SVG. The span shows nothing rather than
+	// flashing "%icon%" text for one frame.
+	font-size: 0;
+	color: transparent;
+
+	// Size the SVG injected by the MutationObserver preview (preview.ts).
+	// px dimensions are independent of the parent's `font-size: 0` so the
+	// icon is correctly sized even though the containing span has zero
+	// font-size. These rules are editor-only — the frontend SVG is sized
+	// by the inline style emitted from Icon_Span::render().
+	svg {
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		vertical-align: -2px; // ~-0.125em at 16px base
+	}
+}
+
+// ----------------------------------------------------------------------------
+// Popover chrome
+// ----------------------------------------------------------------------------
+
+.prc-block-bits__bit-popover {
+	padding: 8px;
+}
+
+// ----------------------------------------------------------------------------
+// Modal picker (> MODAL_THRESHOLD bits)
+// ----------------------------------------------------------------------------
+
+.prc-block-bits-modal {
+	// Constrain width so long category labels stay readable without wrapping.
+	.components-modal__content {
+		min-width: 320px;
+	}
+
+	&__search {
+		margin-bottom: 12px;
+	}
+
+	&__groups {
+		max-height: min(60vh, 480px);
+		overflow-y: auto;
+
+		// Slight vertical rhythm between groups.
+		.components-menu-group + .components-menu-group {
+			margin-top: 8px;
+		}
+	}
+
+	&__empty {
+		margin: 0;
+		color: #757575;
+	}
+}
