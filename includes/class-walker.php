@@ -245,7 +245,8 @@ class Walker {
 						$bit['render_callback'],
 						$attributes,
 						$parsed_block,
-						$block_instance
+						$block_instance,
+						Bit_Render_Context::all()
 					);
 				} catch ( Throwable $e ) {
 					wp_trigger_error(

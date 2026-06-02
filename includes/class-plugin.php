@@ -34,6 +34,7 @@ class Plugin {
 	private function load_dependencies(): void {
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-loader.php';
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-registry.php';
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-bit-render-context.php';
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-settings.php';
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-assets.php';
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-walker.php';
