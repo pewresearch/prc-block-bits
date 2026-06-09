@@ -2,28 +2,28 @@
 > @prc/block-bits@1.0.0 build
 > wp-scripts build && wp-scripts build --config webpack.settings.config.js
 
-assets by path editor/*.css 2.82 KiB
-  asset editor/index-rtl.css 1.41 KiB [emitted] (name: editor/index)
-  asset editor/index.css 1.41 KiB [emitted] (name: editor/index)
-asset editor/index.js 15.4 KiB [emitted] [minimized] (name: editor/index)
-asset editor/index.asset.php 237 bytes [emitted] (name: editor/index)
-Entrypoint editor/index 18.5 KiB = editor/index.css 1.41 KiB editor/index.js 15.4 KiB editor/index-rtl.css 1.41 KiB editor/index.asset.php 237 bytes
-orphan modules 263 KiB (javascript) 937 bytes (runtime) [orphan] 347 modules
+assets by path [1m[32meditor/*.css[39m[22m 2.82 KiB
+  asset [1m[32meditor/index-rtl.css[39m[22m 1.41 KiB [1m[32m[emitted][39m[22m (name: editor/index)
+  asset [1m[32meditor/index.css[39m[22m 1.41 KiB [1m[32m[emitted][39m[22m (name: editor/index)
+asset [1m[32meditor/index.js[39m[22m 15.4 KiB [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m (name: editor/index)
+asset [1m[32meditor/index.asset.php[39m[22m 237 bytes [1m[32m[emitted][39m[22m (name: editor/index)
+Entrypoint [1meditor/index[39m[22m 18.5 KiB = [1m[32meditor/index.css[39m[22m 1.41 KiB [1m[32meditor/index.js[39m[22m 15.4 KiB [1m[32meditor/index-rtl.css[39m[22m 1.41 KiB [1m[32meditor/index.asset.php[39m[22m 237 bytes
+orphan modules 263 KiB (javascript) 937 bytes (runtime) [1m[33m[orphan][39m[22m 347 modules
 runtime modules 670 bytes 3 modules
-built modules 52.8 KiB (javascript) 1.41 KiB (css/mini-extract) [built]
-  ./src/editor/index.ts + 30 modules 52.8 KiB [not cacheable] [built] [code generated]
-  css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]!./src/style/editor.scss 1.41 KiB [built] [code generated]
-webpack 5.106.2 compiled successfully in 1672 ms
+built modules 52.8 KiB (javascript) 1.41 KiB (css/mini-extract) [1m[33m[built][39m[22m
+  [1m./src/editor/index.ts + 30 modules[39m[22m 52.8 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+  css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/style/editor.scss[39m[22m 1.41 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 14175 ms
 assets by chunk 6.96 KiB (name: index)
-  asset index.js 6.77 KiB [emitted] [minimized] (name: index)
-  asset index.asset.php 189 bytes [emitted] (name: index)
-assets by path ./*.css 4.79 KiB
-  asset ./style-index-rtl.css 2.39 KiB [emitted] (name: ./style-index) (id hint: style)
-  asset ./style-index.css 2.39 KiB [emitted] (name: ./style-index) (id hint: style)
-Entrypoint index 11.7 KiB = ./style-index.css 2.39 KiB ./style-index-rtl.css 2.39 KiB index.js 6.77 KiB index.asset.php 189 bytes
-orphan modules 225 KiB (javascript) 937 bytes (runtime) [orphan] 334 modules
+  asset [1m[32mindex.js[39m[22m 6.77 KiB [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m (name: index)
+  asset [1m[32mindex.asset.php[39m[22m 189 bytes [1m[32m[emitted][39m[22m (name: index)
+assets by path [1m[32m./*.css[39m[22m 4.79 KiB
+  asset [1m[32m./style-index-rtl.css[39m[22m 2.39 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
+  asset [1m[32m./style-index.css[39m[22m 2.39 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
+Entrypoint [1mindex[39m[22m 11.7 KiB = [1m[32m./style-index.css[39m[22m 2.39 KiB [1m[32m./style-index-rtl.css[39m[22m 2.39 KiB [1m[32mindex.js[39m[22m 6.77 KiB [1m[32mindex.asset.php[39m[22m 189 bytes
+orphan modules 225 KiB (javascript) 937 bytes (runtime) [1m[33m[orphan][39m[22m 334 modules
 runtime modules 3.06 KiB 5 modules
-built modules 11.2 KiB (javascript) 2.39 KiB (css/mini-extract) [built]
-  ./src/settings/index.tsx + 13 modules 11.2 KiB [not cacheable] [built] [code generated]
-  css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]!./src/settings/style.scss 2.39 KiB [built] [code generated]
-webpack 5.106.2 compiled successfully in 999 ms
+built modules 11.2 KiB (javascript) 2.39 KiB (css/mini-extract) [1m[33m[built][39m[22m
+  [1m./src/settings/index.tsx + 13 modules[39m[22m 11.2 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+  css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/settings/style.scss[39m[22m 2.39 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 6003 ms
