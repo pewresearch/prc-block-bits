@@ -1,137 +1,11 @@
 $gray-100: #f0f0f0;
-$gray-200: #e0e0e0;
 $gray-700: #757575;
-$gray-900: #1e1e1e;
 
 $grid-unit-05: 4px;
 $grid-unit-10: 8px;
 $grid-unit-15: 12px;
-$grid-unit-20: 16px;
-$grid-unit-30: 24px;
-$grid-unit-40: 32px;
-
-$radius-large: 4px;
 
 .block-bits-settings {
-	max-width: min(860px, 100%);
-	margin: 0;
-	padding: $grid-unit-10 0 $grid-unit-30;
-
-	&__header {
-		margin-bottom: $grid-unit-20;
-
-		h1 {
-			margin-bottom: $grid-unit-05;
-			font-size: 22px;
-			line-height: 1.25;
-			font-weight: 500;
-		}
-	}
-
-	&__header-description {
-		color: $gray-700;
-		font-size: 13px;
-		line-height: 1.45;
-		max-width: 78ch;
-	}
-
-	&__content {
-		margin-top: 0;
-		padding: 0;
-		border-radius: $radius-large;
-	}
-
-	&__list {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-		display: flex;
-		flex-direction: column;
-		gap: $grid-unit-15;
-	}
-
-	&__list-item {
-		width: 100%;
-		margin: 0 auto;
-	}
-
-	&__loading {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		margin-top: $grid-unit-20;
-	}
-
-	&__accordion {
-		margin: 0;
-		padding: 0;
-		border: 1px solid #dcdcde;
-		border-radius: $radius-large;
-		box-shadow: none !important;
-		background: #fff;
-		overflow: hidden;
-
-		&-trigger {
-			display: block;
-			width: 100%;
-			background: none;
-			border: none;
-			padding: $grid-unit-20 $grid-unit-30;
-			margin: 0;
-			cursor: pointer;
-			text-align: left;
-			height: auto;
-
-			&:focus {
-				box-shadow: none !important;
-			}
-
-			&:focus-visible {
-				box-shadow: 0 0 0 var(--wp-admin-border-width-focus)
-					var(--wp-admin-theme-color, #3858e9) !important;
-			}
-		}
-
-		&-chevron-up {
-			transition: transform 0.3s ease-in-out;
-			transform: rotate(180deg);
-			color: #50575e;
-		}
-
-		&-chevron-down {
-			transition: transform 0.3s ease-in-out;
-			transform: rotate(0deg);
-			color: #50575e;
-		}
-
-		.components-card__body {
-			padding: 0;
-		}
-	}
-
-	&__accordion-header {
-		color: $gray-900;
-		margin: 0;
-		padding: 0;
-		font-size: 14px;
-		font-weight: 600;
-		line-height: 1.35;
-	}
-
-	&__accordion-description {
-		color: $gray-700;
-		margin: 0;
-		padding: 0;
-		font-size: 12px;
-		line-height: 1.45;
-	}
-
-	&__accordion-form {
-		margin-top: 0;
-		padding: $grid-unit-20 $grid-unit-30;
-		border-top: 1px solid #f0f0f1;
-	}
-
 	&__namespace-group {
 		& + & {
 			border-top: 1px solid $gray-100;
@@ -162,11 +36,5 @@ $radius-large: 4px;
 			color: $gray-700;
 			margin-top: 2px;
 		}
-	}
-
-	&__form-actions {
-		margin-top: $grid-unit-15;
-		padding-top: $grid-unit-15;
-		border-top: 1px solid $gray-100;
 	}
 }

@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react';
-
 export interface BitDescriptor {
 	name: string;
 	label: string;
@@ -19,13 +17,4 @@ export interface SettingsStoreState {
 	settings: Settings;
 	bits: BitDescriptor[];
 	isLoaded: boolean;
-}
-
-export interface SettingsAccordionProps {
-	title: string;
-	description: string;
-	children: ReactNode;
-	contentId?: string;
-	headingId?: string;
-	descriptionId?: string;
 }

@@ -103,7 +103,7 @@ export default function BitsSection() {
 					</VStack>
 				</div>
 			))}
-			<div className="block-bits-settings__form-actions">
+			<div className="prc-settings__form-actions">
 				<Button
 					variant="primary"
 					onClick={handleSave}

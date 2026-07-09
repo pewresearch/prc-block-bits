@@ -120,10 +120,15 @@ class Settings {
 		// style-index.css is emitted when the entry has a .scss import.
 		$style_path = plugin_dir_path( __DIR__ ) . 'build/settings/style-index.css';
 		if ( file_exists( $style_path ) ) {
+			$style_deps = array( 'wp-components' );
+			if ( in_array( 'prc-components', $asset['dependencies'], true ) ) {
+				$style_deps[] = 'prc-components';
+			}
+
 			wp_enqueue_style(
 				$handle,
 				plugins_url( 'build/settings/style-index.css', PRC_BLOCK_BITS_FILE ),
-				array( 'wp-components' ),
+				$style_deps,
 				$asset['version']
 			);
 		}
