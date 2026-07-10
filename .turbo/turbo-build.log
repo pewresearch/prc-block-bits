@@ -1,5 +1,5 @@
 
-> @prc/block-bits@1.0.1 build
+> @prc/block-bits@1.0.0 build
 > wp-scripts build && wp-scripts build --config webpack.settings.config.js
 
 assets by path editor/*.css 2.82 KiB
@@ -13,7 +13,7 @@ runtime modules 670 bytes 3 modules
 built modules 52.8 KiB (javascript) 1.41 KiB (css/mini-extract) [built]
   ./src/editor/index.ts + 30 modules 52.8 KiB [not cacheable] [built] [code generated]
   css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]!./src/style/editor.scss 1.41 KiB [built] [code generated]
-webpack 5.106.2 compiled successfully in 4497 ms
+webpack 5.106.2 compiled successfully in 5884 ms
 assets by chunk 3.96 KiB (name: index)
   asset index.js 3.79 KiB [emitted] [minimized] (name: index)
   asset index.asset.php 174 bytes [emitted] (name: index)
@@ -26,4 +26,4 @@ runtime modules 2.5 KiB 3 modules
 built modules 6.04 KiB (javascript) 525 bytes (css/mini-extract) [built]
   ./src/settings/index.tsx + 10 modules 6.04 KiB [not cacheable] [built] [code generated]
   css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]!./src/settings/style.scss 525 bytes [built] [code generated]
-webpack 5.106.2 compiled successfully in 2205 ms
+webpack 5.106.2 compiled successfully in 2779 ms
