@@ -78,7 +78,6 @@ export function ShareableTextEdit({
 				options={PLATFORM_OPTIONS}
 				onChange={(next) => setPlatform(next)}
 				__nextHasNoMarginBottom
-				__next40pxDefaultSize
 			/>
 			<div style={{ marginTop: 12 }}>
 				<TextControl
@@ -90,7 +89,6 @@ export function ShareableTextEdit({
 						'prc-block-bits'
 					)}
 					__nextHasNoMarginBottom
-					__next40pxDefaultSize
 				/>
 			</div>
 			<div style={{ marginTop: 12 }}>

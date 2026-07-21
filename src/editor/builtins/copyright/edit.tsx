@@ -111,7 +111,6 @@ export function CopyrightEdit({
 				min={1900}
 				step={1}
 				__nextHasNoMarginBottom
-				__next40pxDefaultSize
 			/>
 			<TextControl
 				label={__('Copyright holder (optional)', 'prc-block-bits')}
@@ -122,7 +121,6 @@ export function CopyrightEdit({
 					'prc-block-bits'
 				)}
 				__nextHasNoMarginBottom
-				__next40pxDefaultSize
 			/>
 			<Flex justify="flex-end" gap={2} style={{ marginTop: 12 }}>
 				<FlexItem>

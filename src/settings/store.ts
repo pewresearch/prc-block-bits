@@ -8,6 +8,37 @@ import type {
 
 export const STORE_NAME = 'prc/block-bits-settings';
 
+/**
+ * Map REST `{ disabled_bits }` + registered bits → `{ bit_enabled }` for DataForm.
+ *
+ * @param response
+ */
+function settingsFromResponse(response: ApiResponse): {
+	settings: Settings;
+	orphanDisabledBits: string[];
+} {
+	const disabled = new Set(response.settings?.disabled_bits ?? []);
+	const bits = response.bits ?? [];
+	const knownNames = new Set(bits.map((bit) => bit.name));
+	const bitEnabled: Record<string, boolean> = {};
+
+	for (const bit of bits) {
+		bitEnabled[bit.name] = !disabled.has(bit.name);
+	}
+
+	const orphanDisabledBits = [...disabled].filter(
+		(name) => !knownNames.has(name)
+	);
+
+	return {
+		settings: {
+			// eslint-disable-next-line camelcase -- mirrors form field path prefix
+			bit_enabled: bitEnabled,
+		},
+		orphanDisabledBits,
+	};
+}
+
 export const store = createSettingsStore<
 	Settings,
 	SettingsStoreState,
@@ -17,42 +48,27 @@ export const store = createSettingsStore<
 	defaultState: {
 		settings: {
 			// eslint-disable-next-line camelcase
-			disabled_bits: [],
+			bit_enabled: {},
 		},
 		bits: [],
+		orphanDisabledBits: [],
 		isLoaded: false,
 	},
-	mapResponseToState: (_state, response) => ({
-		bits: response.bits,
-	}),
-	extraActions: {
-		toggleBit(bitName: string) {
-			return { type: 'TOGGLE_BIT', payload: bitName };
-		},
-	},
-	extraReducer: (state, action) => {
-		if (action.type === 'TOGGLE_BIT') {
-			const bitName = action.payload as string;
-			// eslint-disable-next-line camelcase
-			const currentDisabled = state.settings.disabled_bits;
-			const isCurrentlyDisabled = currentDisabled.includes(bitName);
-			const nextDisabled = isCurrentlyDisabled
-				? currentDisabled.filter((n) => n !== bitName)
-				: [...currentDisabled, bitName];
-			return {
-				...state,
-				settings: {
-					...state.settings,
-					// eslint-disable-next-line camelcase
-					disabled_bits: nextDisabled,
-				},
-			};
-		}
-		return null;
+	getSettingsFromResponse: (response) =>
+		settingsFromResponse(response).settings,
+	mapResponseToState: (_state, response) => {
+		const mapped = settingsFromResponse(response);
+		return {
+			bits: response.bits ?? [],
+			orphanDisabledBits: mapped.orphanDisabledBits,
+		};
 	},
 	extraSelectors: {
 		getBits(state: SettingsStoreState): BitDescriptor[] {
 			return state.bits;
+		},
+		getOrphanDisabledBits(state: SettingsStoreState): string[] {
+			return state.orphanDisabledBits;
 		},
 	},
 });

@@ -173,25 +173,71 @@ function setupForDocument(doc: Document, spritesBase: string): void {
  * Look for the editor iframe and, if found and ready, set up injection for
  * its contentDocument. Returns true once the iframe has been wired up.
  */
-function trySetupIframe(spritesBase: string): boolean {
-	const iframe = document.querySelector(
+function getEditorCanvasIframe(): HTMLIFrameElement | null {
+	return document.querySelector(
 		EDITOR_IFRAME_SELECTOR
 	) as HTMLIFrameElement | null;
-	const iframeDoc = iframe?.contentDocument;
+}
 
-	// Gutenberg's Iframe component creates the iframe with a blob:// src and
-	// then writes the editor HTML into it. Defer setup until Gutenberg has
-	// actually rendered the block-list layout — that's our reliable
-	// "iframe is ready" signal.
-	const iframeReady =
-		!!iframeDoc?.body &&
-		!!iframeDoc.querySelector('.block-editor-block-list__layout');
+function isEditorCanvasReady(doc: Document): boolean {
+	return (
+		!!doc.body && !!doc.querySelector('.block-editor-block-list__layout')
+	);
+}
 
-	if (!iframeReady || !iframeDoc) {
+function trySetupIframe(spritesBase: string): boolean {
+	const iframeDoc = getEditorCanvasIframe()?.contentDocument;
+
+	if (!iframeDoc || !isEditorCanvasReady(iframeDoc)) {
 		return false;
 	}
 	setupForDocument(iframeDoc, spritesBase);
 	return wiredDocuments.has(iframeDoc);
+}
+
+/**
+ * Watch until the editor iframe is ready, then wire its contentDocument.
+ * Optional onGiveUp runs after 30s if the iframe never becomes ready (legacy
+ * non-iframe surfaces).
+ */
+function watchForIframeReady(spritesBase: string, onGiveUp?: () => void): void {
+	let iframe = getEditorCanvasIframe();
+
+	const cleanup = () => {
+		parentObserver.disconnect();
+		clearInterval(pollHandle);
+		iframe?.removeEventListener('load', onReady);
+	};
+
+	const onReady = () => {
+		if (trySetupIframe(spritesBase)) {
+			cleanup();
+			return;
+		}
+		const nextIframe = getEditorCanvasIframe();
+		if (nextIframe && nextIframe !== iframe) {
+			iframe?.removeEventListener('load', onReady);
+			iframe = nextIframe;
+			iframe.addEventListener('load', onReady);
+		}
+	};
+
+	if (iframe) {
+		iframe.addEventListener('load', onReady);
+	}
+
+	const parentObserver = new MutationObserver(onReady);
+	parentObserver.observe(document.body, {
+		childList: true,
+		subtree: true,
+	});
+
+	const pollHandle = setInterval(onReady, 250);
+
+	setTimeout(() => {
+		cleanup();
+		onGiveUp?.();
+	}, 30000);
 }
 
 /**
@@ -212,41 +258,23 @@ export function initIconSpanEditorPreview(): void {
 	// MutationObserver.observe(document.body, ...) with a null body throws
 	// synchronously.
 	const runSetup = () => {
-		setupForDocument(document, spritesBase);
-
 		if (trySetupIframe(spritesBase)) {
 			return;
 		}
 
-		// Iframe not ready yet — watch the parent's body for it to be
-		// inserted AND poll on a short interval as a belt-and-suspenders for
-		// the case where the iframe is in the DOM but its contentDocument
-		// hasn't finished loading (the MutationObserver wouldn't fire for
-		// that transition).
-		const parentObserver = new MutationObserver(() => {
-			if (trySetupIframe(spritesBase)) {
-				parentObserver.disconnect();
-				clearInterval(pollHandle);
-			}
-		});
-		parentObserver.observe(document.body, {
-			childList: true,
-			subtree: true,
-		});
+		if (getEditorCanvasIframe()) {
+			// Iframe exists but isn't ready yet — wait for it. Bit spans live
+			// in the iframe on these surfaces, so skip parent wiring.
+			watchForIframeReady(spritesBase);
+			return;
+		}
 
-		const pollHandle = setInterval(() => {
-			if (trySetupIframe(spritesBase)) {
-				clearInterval(pollHandle);
-				parentObserver.disconnect();
-			}
-		}, 250);
-
-		// Safety bail-out: stop iframe-detection after 30s. If the iframe
-		// hasn't appeared by then the editor is in an unexpected state.
-		setTimeout(() => {
-			clearInterval(pollHandle);
-			parentObserver.disconnect();
-		}, 30000);
+		// No iframe yet: legacy/non-iframe surfaces (e.g. navigation editor)
+		// host bit spans in the parent document. Wire it immediately so
+		// previews aren't deferred until the 30s watch timeout, and keep
+		// watching in case an iframe is inserted later.
+		setupForDocument(document, spritesBase);
+		watchForIframeReady(spritesBase);
 	};
 
 	if (document.body) {
