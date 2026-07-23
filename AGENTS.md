@@ -117,12 +117,12 @@ Implement `BitEditProps` (`onCommit` / `onCancel`). Pattern: `src/editor/builtin
 
 ### 4. iAPI bits
 
-Walker adds directives; editor-saved `default_text` is the fallback when the Interactivity store is absent. Bind to an existing store namespace (e.g. `prc-quiz/controller`). See PT-2026 registrations and `tests/prc-block-bits/pt-2026-bits.spec.ts`.
+Walker adds directives; editor-saved `default_text` is the fallback when the Interactivity store is absent. Bind to an existing store namespace (e.g. `prc-quiz/controller`). See PT-2026 registrations and `tests/prc-block-bits/e2e/pt-2026-bits.spec.ts`.
 
 ### 5. Tests & release
 
-- E2E: `tests/prc-block-bits/` (Playwright, root `playwright.config.js`).
-- PHPUnit/walker: test fixtures load when `PRC_PLATFORM_TESTING_MODE` is true (`tests/prc-block-bits/fixtures/test-bits.php`).
+- E2E: `tests/prc-block-bits/e2e/` (Playwright, root `playwright.config.js`).
+- PHPUnit/walker: test fixtures load when `PRC_PLATFORM_TESTING_MODE` is true (`tests/prc-block-bits/e2e/fixtures/test-bits.php`).
 - Ship a **changeset** for `@prc/block-bits` if you change this plugin; ship changesets for **your** workspace when you only touch consumer PHP/JS.
 
 ## Editor picker UX
@@ -173,7 +173,7 @@ Requires `prc-scripts` active (`Requires Plugins` in main plugin file).
 5. **Disabled bits** — Settings can remove a bit from the projected payload; `registerBlockBit()` in JS is a no-op if the name is missing from `window.prcBlockBits.bits`.
 6. **Modal categories** — set `category` in PHP (e.g. `'Quiz'` for quiz plugins); affects grouping and search, not render behavior.
 7. **Visual bits** — add a `prc-block-bit-<name>` reset in `src/style/editor.scss` if the default token pill is wrong (see icon-span).
-8. **Do not** add per-plugin Playwright configs or `.wp-env.json` — tests live in `/tests/prc-block-bits/`.
+8. **Do not** add per-plugin Playwright configs or `.wp-env.json` — tests live in `/tests/prc-block-bits/e2e/`.
 
 ## Related docs
 

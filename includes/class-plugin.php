@@ -64,14 +64,14 @@ class Plugin {
 	/**
 	 * Load test-only bit registrations when running in PRC_PLATFORM_TESTING_MODE.
 	 *
-	 * The fixture file lives under `tests/prc-block-bits/fixtures/` so test
+	 * The fixture file lives under `tests/prc-block-bits/e2e/fixtures/` so test
 	 * code stays out of the production plugin's code paths.
 	 */
 	private function maybe_load_test_fixtures(): void {
 		if ( ! defined( 'PRC_PLATFORM_TESTING_MODE' ) || ! PRC_PLATFORM_TESTING_MODE ) {
 			return;
 		}
-		$fixture = dirname( PRC_BLOCK_BITS_DIR, 2 ) . '/tests/prc-block-bits/fixtures/test-bits.php';
+		$fixture = dirname( PRC_BLOCK_BITS_DIR, 2 ) . '/tests/prc-block-bits/e2e/fixtures/test-bits.php';
 		if ( file_exists( $fixture ) ) {
 			require_once $fixture;
 		}
