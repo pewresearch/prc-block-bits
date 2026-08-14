@@ -1,6 +1,6 @@
 {
 	"name": "@prc/block-bits",
-	"version": "1.0.3",
+	"version": "1.0.2",
 	"description": "Inline-RichText 'bits' registry, central render-block walker, and editor toolbar for the PRC Platform.",
 	"scripts": {
 		"build": "wp-scripts build && wp-scripts build --config webpack.settings.config.js",
