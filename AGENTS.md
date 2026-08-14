@@ -178,6 +178,6 @@ Requires `prc-scripts` active (`Requires Plugins` in main plugin file).
 ## Related docs
 
 - [README.md](README.md) — full `register_block_bit()` schema and strategies
-- [docs/DEVELOPMENT_GUIDELINES.md](../../docs/DEVELOPMENT_GUIDELINES.md) — platform block patterns
+- [docs/development-guidelines.md](../../docs/development-guidelines.md) — platform block patterns
 - Root [AGENTS.md](../../AGENTS.md) — monorepo commands, Playground, Turbo builds
 

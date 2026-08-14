@@ -1,5 +1,7 @@
 # PRC Block Bits
 
+> Canonical docs: [docs/plugins/prc-block-bits/](../../docs/plugins/prc-block-bits/)
+
 > Inline-RichText "bits" registry, central render-block walker, and editor toolbar.
 
 `prc-block-bits` provides a shared registry and a single-pass render-block walker for **bits** — small pieces of dynamic content that live **inside** a string of static text (mid-paragraph, mid-heading), inside any RichText-bearing block. It also ships an editor toolbar for inserting bits and a set of built-in bits.

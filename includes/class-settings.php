@@ -9,6 +9,8 @@ declare( strict_types=1 );
 
 namespace PRC\Platform\Block_Bits;
 
+use PRC\Platform\Settings_Page_Boot;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -92,7 +94,7 @@ class Settings {
 	}
 
 	public function render_admin_page(): void {
-		echo '<div class="wrap"><div id="prc-block-bits-settings-admin"></div></div>';
+		Settings_Page_Boot::render( 'prc-block-bits-settings-admin' );
 	}
 
 	/** @hook admin_enqueue_scripts */
@@ -132,6 +134,12 @@ class Settings {
 				$asset['version']
 			);
 		}
+
+		Settings_Page_Boot::enqueue(
+			$handle,
+			(string) $asset['version'],
+			'prc-block-bits-settings-admin'
+		);
 	}
 
 	/** @hook rest_api_init */
