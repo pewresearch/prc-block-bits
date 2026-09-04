@@ -39,10 +39,19 @@ class Walker {
 	 */
 	public const NAME_ATTRIBUTE = 'data-prc-block-bit';
 
-	private const NEWRELIC_KEY = 'block_bits/walker';
-
+	/**
+	 * Bit registry used for strategy lookup.
+	 *
+	 * @var Registry
+	 */
 	private Registry $registry;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param Loader|null   $loader   Optional plugin loader for hook registration.
+	 * @param Registry|null $registry Optional registry override for tests.
+	 */
 	public function __construct( ?Loader $loader = null, ?Registry $registry = null ) {
 		$this->registry = $registry ?? Registry::instance();
 		if ( null === $loader ) {
@@ -56,9 +65,9 @@ class Walker {
 	/**
 	 * `render_block` filter callback.
 	 *
-	 * @param string         $block_content   The block's rendered HTML.
-	 * @param array          $parsed_block    The parsed block.
-	 * @param WP_Block|null  $block_instance  Block instance (or null on legacy paths).
+	 * @param string        $block_content   The block's rendered HTML.
+	 * @param array         $parsed_block    The parsed block.
+	 * @param WP_Block|null $block_instance  Block instance (or null on legacy paths).
 	 */
 	public function handle( $block_content, $parsed_block, $block_instance = null ) {
 		if ( ! is_string( $block_content ) || '' === $block_content ) {
@@ -70,10 +79,6 @@ class Walker {
 		// parser-walk cost.
 		if ( ! str_contains( $block_content, self::MARKER_CLASS ) ) {
 			return $block_content;
-		}
-
-		if ( function_exists( '\PRC\Platform\Newrelic\trace' ) ) {
-			\PRC\Platform\Newrelic\trace( self::NEWRELIC_KEY, 'invoked' );
 		}
 
 		$block_content = $this->emit_iapi_directives( $block_content );
@@ -99,9 +104,12 @@ class Walker {
 	 * `WP_HTML_Tag_Processor` cannot change the tag name; the regex is anchored
 	 * to the specific `data-prc-block-bit` discriminator so it cannot mis-match
 	 * unrelated spans.
+	 *
+	 * @param string $block_content Rendered block HTML.
+	 * @return string Updated HTML with iAPI directives applied.
 	 */
 	private function emit_iapi_directives( string $block_content ): string {
-		$tag             = new WP_HTML_Tag_Processor( $block_content );
+		$tag                   = new WP_HTML_Tag_Processor( $block_content );
 		$bits_needing_tag_swap = array();
 
 		while ( $tag->next_tag( array( 'class_name' => self::MARKER_CLASS ) ) ) {
@@ -194,6 +202,11 @@ class Walker {
 	 * carried inside the outer span's match boundaries and gets dropped
 	 * along with the rest of the outer span's content. We log
 	 * `_doing_it_wrong()` once per request when nesting is detected.
+	 *
+	 * @param string        $block_content  Rendered block HTML.
+	 * @param array         $parsed_block   Parsed block data.
+	 * @param WP_Block|null $block_instance Block instance when available.
+	 * @return string HTML with callback bits substituted.
 	 */
 	private function substitute_callback_bits( string $block_content, array $parsed_block, ?WP_Block $block_instance ): string {
 		// Anchored on both `prc-block-bit` class and the discriminator
@@ -211,10 +224,10 @@ class Walker {
 		$result = preg_replace_callback(
 			$pattern,
 			function ( array $match ) use ( $registry, $parsed_block, $block_instance, &$nested_logged ): string {
-				$original    = $match[0];
-				$bit_name    = $match[3];
-				$attr_blob   = $match[4];
-				$inner_html  = $match[5];
+				$original   = $match[0];
+				$bit_name   = $match[3];
+				$attr_blob  = $match[4];
+				$inner_html = $match[5];
 
 				$bit = $registry->get( $bit_name );
 				if ( null === $bit || 'callback' !== $bit['render_strategy'] ) {
@@ -229,11 +242,13 @@ class Walker {
 					$nested_logged = true;
 					_doing_it_wrong(
 						__CLASS__ . '::handle',
-						esc_html( sprintf(
-							'Nested `%s` markers detected for bit "%s". Bits cannot wrap or contain other bits; the editor format type is `object: true` to prevent this. Inner span content will be dropped.',
-							self::MARKER_CLASS,
-							$bit_name
-						) ),
+						esc_html(
+							sprintf(
+								'Nested `%s` markers detected for bit "%s". Bits cannot wrap or contain other bits; the editor format type is `object: true` to prevent this. Inner span content will be dropped.',
+								self::MARKER_CLASS,
+								$bit_name
+							) 
+						),
 						'1.0.0'
 					);
 				}
@@ -311,6 +326,13 @@ class Walker {
 		return $out;
 	}
 
+	/**
+	 * Sanitize a harvested attribute value for its schema type.
+	 *
+	 * @param string $raw Raw attribute value from markup.
+	 * @param array  $def Attribute schema definition.
+	 * @return mixed Sanitized value.
+	 */
 	private function sanitize_for_type( string $raw, array $def ): mixed {
 		switch ( $def['type'] ) {
 			case 'string':
@@ -328,6 +350,12 @@ class Walker {
 		}
 	}
 
+	/**
+	 * Resolve the default value for an attribute schema definition.
+	 *
+	 * @param array $def Attribute schema definition.
+	 * @return mixed Default value for the schema type.
+	 */
 	private function default_for_type( array $def ): mixed {
 		if ( array_key_exists( 'default', $def ) ) {
 			return $def['default'];
@@ -339,6 +367,12 @@ class Walker {
 		};
 	}
 
+	/**
+	 * Convert a camelCase attribute key to kebab-case for HTML data attributes.
+	 *
+	 * @param string $key Schema attribute key.
+	 * @return string Kebab-case attribute suffix.
+	 */
 	private function camel_to_kebab( string $key ): string {
 		return strtolower( (string) preg_replace( '/([a-z0-9])([A-Z])/', '$1-$2', $key ) );
 	}
@@ -380,16 +414,16 @@ class Walker {
 		);
 
 		return array(
-			'span'   => $global_attrs,
-			'i'      => $global_attrs,
-			'em'     => $global_attrs,
-			'strong' => $global_attrs,
-			'b'      => $global_attrs,
-			'sup'    => $global_attrs,
-			'sub'    => $global_attrs,
-			'code'   => $global_attrs,
-			'br'     => array(),
-			'a'      => array_merge(
+			'span'     => $global_attrs,
+			'i'        => $global_attrs,
+			'em'       => $global_attrs,
+			'strong'   => $global_attrs,
+			'b'        => $global_attrs,
+			'sup'      => $global_attrs,
+			'sub'      => $global_attrs,
+			'code'     => $global_attrs,
+			'br'       => array(),
+			'a'        => array_merge(
 				$global_attrs,
 				array(
 					'href'   => true,
@@ -397,18 +431,55 @@ class Walker {
 					'target' => true,
 				)
 			),
-			'svg'    => $svg_global,
-			'path'   => $svg_global,
-			'circle' => array_merge( $svg_global, array( 'cx' => true, 'cy' => true, 'r' => true ) ),
-			'rect'   => array_merge( $svg_global, array( 'x' => true, 'y' => true, 'rx' => true, 'ry' => true ) ),
-			'line'   => array_merge( $svg_global, array( 'x1' => true, 'y1' => true, 'x2' => true, 'y2' => true ) ),
-			'polygon' => array_merge( $svg_global, array( 'points' => true ) ),
+			'svg'      => $svg_global,
+			'path'     => $svg_global,
+			'circle'   => array_merge(
+				$svg_global,
+				array(
+					'cx' => true,
+					'cy' => true,
+					'r'  => true,
+				) 
+			),
+			'rect'     => array_merge(
+				$svg_global,
+				array(
+					'x'  => true,
+					'y'  => true,
+					'rx' => true,
+					'ry' => true,
+				) 
+			),
+			'line'     => array_merge(
+				$svg_global,
+				array(
+					'x1' => true,
+					'y1' => true,
+					'x2' => true,
+					'y2' => true,
+				) 
+			),
+			'polygon'  => array_merge( $svg_global, array( 'points' => true ) ),
 			'polyline' => array_merge( $svg_global, array( 'points' => true ) ),
-			'ellipse' => array_merge( $svg_global, array( 'cx' => true, 'cy' => true, 'rx' => true, 'ry' => true ) ),
-			'g'      => $svg_global,
-			'defs'   => $svg_global,
-			'use'    => array_merge( $svg_global, array( 'href' => true, 'xlink:href' => true ) ),
-			'title'  => $global_attrs,
+			'ellipse'  => array_merge(
+				$svg_global,
+				array(
+					'cx' => true,
+					'cy' => true,
+					'rx' => true,
+					'ry' => true,
+				) 
+			),
+			'g'        => $svg_global,
+			'defs'     => $svg_global,
+			'use'      => array_merge(
+				$svg_global,
+				array(
+					'href'       => true,
+					'xlink:href' => true,
+				) 
+			),
+			'title'    => $global_attrs,
 		);
 	}
 }
