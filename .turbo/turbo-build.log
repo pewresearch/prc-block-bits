@@ -13,7 +13,7 @@ runtime modules 670 bytes 3 modules
 built modules 53.1 KiB (javascript) 1.41 KiB (css/mini-extract) [1m[33m[built][39m[22m
   [1m./src/editor/index.ts + 30 modules[39m[22m 53.1 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/style/editor.scss[39m[22m 1.41 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 8909 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 1665 ms
 assets by chunk 3.8 KiB (name: index)
   asset [1m[32mindex.js[39m[22m 3.63 KiB [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m (name: index)
   asset [1m[32mindex.asset.php[39m[22m 174 bytes [1m[32m[emitted][39m[22m (name: index)
@@ -26,4 +26,4 @@ runtime modules 2.5 KiB 3 modules
 built modules 5.33 KiB (javascript) 0 bytes (css/mini-extract) [1m[33m[built][39m[22m
   [1m./src/settings/index.tsx + 9 modules[39m[22m 5.33 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/settings/style.scss[39m[22m 0 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 5739 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 871 ms
