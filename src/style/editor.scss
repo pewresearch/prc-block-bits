@@ -65,12 +65,13 @@
 		background-color: transparent;
 	}
 
-	// Collapse the %icon% placeholder text so it is invisible between
-	// the DOM tear-out (on each rich-text re-render) and the MutationObserver
-	// re-injecting the sprite SVG. The span shows nothing rather than
-	// flashing "%icon%" text for one frame.
+	// Collapse the %icon% placeholder text with font-size: 0 so it stays
+	// invisible between the DOM tear-out (on each rich-text re-render) and
+	// the preview re-injecting the inline SVG. Do not use color: transparent
+	// / #0000 — that also makes currentColor SVG fills invisible. inherit
+	// keeps the glyph the same color as surrounding paragraph text.
 	font-size: 0;
-	color: transparent;
+	color: inherit;
 
 	// Size the SVG injected by the MutationObserver preview (preview.ts).
 	// px dimensions are independent of the parent's `font-size: 0` so the
@@ -82,6 +83,68 @@
 		width: 16px;
 		height: 16px;
 		vertical-align: -2px; // ~-0.125em at 16px base
+	}
+}
+
+.prc-block-bit-icon-span__preview {
+	margin-bottom: 12px;
+
+	svg {
+		display: block;
+		width: 24px;
+		height: 24px;
+		color: currentColor;
+	}
+
+	p {
+		margin: 8px 0 0;
+		font-size: 12px;
+	}
+}
+
+// Copied from Gutenberg `wp-block-icon__inserter-*` so the bits picker
+// matches core/icon when those editor styles are not in the canvas.
+.wp-block-icon__inserter-modal {
+	.wp-block-icon__inserter-sidebar {
+		padding-bottom: 24px;
+	}
+
+	.wp-block-icon__inserter-loading {
+		display: flex;
+		justify-content: center;
+		padding: 24px;
+	}
+
+	.wp-block-icon__inserter-grid-icons-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+	}
+
+	.wp-block-icon__inserter-grid-no-results {
+		display: flex;
+		justify-content: center;
+	}
+
+	.wp-block-icon__inserter-grid-icons-list-item {
+		display: flex;
+		flex-direction: column;
+		height: auto !important;
+	}
+
+	.wp-block-icon__inserter-grid-icons-list-item-icon {
+		padding: 12px;
+
+		svg {
+			display: block;
+			width: 24px;
+			height: 24px;
+		}
+	}
+
+	.wp-block-icon__inserter-grid-icons-list-item-title {
+		font-size: 12px;
+		padding: 4px 4px 8px;
+		overflow-wrap: break-word;
 	}
 }
 

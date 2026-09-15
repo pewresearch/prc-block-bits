@@ -223,11 +223,11 @@ class Walker {
 
 		$result = preg_replace_callback(
 			$pattern,
-			function ( array $match ) use ( $registry, $parsed_block, $block_instance, &$nested_logged ): string {
-				$original   = $match[0];
-				$bit_name   = $match[3];
-				$attr_blob  = $match[4];
-				$inner_html = $match[5];
+			function ( array $captures ) use ( $registry, $parsed_block, $block_instance, &$nested_logged ): string {
+				$original   = $captures[0];
+				$bit_name   = $captures[3];
+				$attr_blob  = $captures[4];
+				$inner_html = $captures[5];
 
 				$bit = $registry->get( $bit_name );
 				if ( null === $bit || 'callback' !== $bit['render_strategy'] ) {
@@ -342,7 +342,9 @@ class Walker {
 			case 'hex_color':
 				return preg_match( '/^#[0-9a-fA-F]{3,8}$/', $raw ) ? $raw : ( $def['default'] ?? '' );
 			case 'icon_name':
-				return preg_match( '/^[a-z0-9_-]+$/i', $raw ) ? $raw : ( $def['default'] ?? '' );
+				// Unnamespaced glyphs (`arrow-right`) and WP registry keys
+				// (`prc/arrow-right`, `core/plus`) both persist.
+				return preg_match( '/^[a-z0-9_-]+(?:\/[a-z0-9_-]+)?$/i', $raw ) ? $raw : ( $def['default'] ?? '' );
 			case 'enum':
 				return in_array( $raw, $def['enum'], true ) ? $raw : ( $def['default'] ?? '' );
 			default:
@@ -382,9 +384,12 @@ class Walker {
 	 * `plugins/prc-block-bits/README.md`.
 	 *
 	 * Allows inline-text formatting + the SVG subset needed for the
-	 * `icon-span` bit's rendered FontAwesome glyphs. Excludes scripts,
-	 * event handlers, iframes, forms, and anything else that has no
-	 * place inside a RichText surface.
+	 * `icon-span` bit (registry fill SVGs and sprite `<use>` fallbacks).
+	 * Curated custom fills fit source paths into the 24×24 viewBox with
+	 * `transform` (translate + scale); that attribute must stay allowlisted
+	 * or those glyphs render as empty specks. Excludes scripts, event
+	 * handlers, iframes, forms, and anything else that has no place
+	 * inside a RichText surface.
 	 */
 	private static function allowed_html(): array {
 		$global_attrs = array(
@@ -404,6 +409,8 @@ class Walker {
 				'xmlns'     => true,
 				'viewbox'   => true,
 				'fill'      => true,
+				'fill-rule' => true,
+				'transform' => true,
 				'stroke'    => true,
 				'width'     => true,
 				'height'    => true,

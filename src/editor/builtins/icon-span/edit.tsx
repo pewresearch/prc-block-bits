@@ -2,11 +2,10 @@
  * Inline editor for the `prc-block-bits/icon-span` bit.
  *
  * Mounted by `BitsToolbarButton` (fresh insert) or `BitPopover` (edit
- * existing) inside a `Popover` anchored to the rich-text surface. Wraps
- * `IconPicker` from `@prc/components` and an `Insert` / `Cancel` action
- * pair. Per the v1 picker UI, the position toggle is hidden
- * (`showPosition={false}`); `iconPosition` survives in the saved
- * attributes for forward-compat with `core/button`'s rendering pipeline.
+ * existing) inside a `Popover` anchored to the rich-text surface. Opens
+ * Gutenberg's registry icon modal (copied until #76787 exports one). Per
+ * the v1 picker UI, `iconPosition` survives in the saved attributes for
+ * forward-compat with `core/button`'s rendering pipeline.
  *
  * RTC anti-pattern note: `useState` is used here strictly for transient
  * pre-commit picker state. We never mirror committed attributes from the
@@ -15,16 +14,17 @@
  */
 
 import { __ } from '@wordpress/i18n';
-import { useState, useCallback } from '@wordpress/element';
+import { useState, useCallback, RawHTML } from '@wordpress/element';
 import { Button, Flex, FlexItem } from '@wordpress/components';
-import { IconPicker } from '@prc/components';
+import { useSelect } from '@wordpress/data';
+import { store as coreStore } from '@wordpress/core-data';
 
 import type { BitEditProps } from '../../registry';
+import { IconPickerModal } from './icon-picker-modal';
+import type { IconRecord } from './icon-types';
 
-interface PickerChange {
-	library?: string;
-	icon?: string;
-	position?: 'left' | 'right';
+function registryValue(iconName: string): string {
+	return iconName.includes('/') ? iconName : '';
 }
 
 export function IconSpanEdit({
@@ -33,20 +33,38 @@ export function IconSpanEdit({
 	onCancel,
 }: BitEditProps): JSX.Element {
 	const [library, setLibrary] = useState<string>(
-		attributes.iconLibrary || 'solid'
+		attributes.iconLibrary || 'prc'
 	);
 	const [iconName, setIconName] = useState<string>(attributes.iconName || '');
+	const [isModalOpen, setModalOpen] = useState(false);
 	const iconColor = attributes.iconColor || '';
 	const iconPosition = attributes.iconPosition === 'left' ? 'left' : 'right';
+	const selectedName = registryValue(iconName) || iconName;
 
-	const handleChange = useCallback((next: PickerChange) => {
-		if (typeof next.library === 'string') {
-			setLibrary(next.library);
-			setIconName('');
+	const selectedIcon = useSelect(
+		(select) => {
+			const name = registryValue(iconName);
+			if (!name) {
+				return null;
+			}
+			return (
+				(select(coreStore).getEntityRecord(
+					'root',
+					'icon',
+					name
+				) as IconRecord | null) ?? null
+			);
+		},
+		[iconName]
+	);
+
+	const handleSelect = useCallback((name: string) => {
+		setIconName(name);
+		const slash = name.indexOf('/');
+		if (slash > 0) {
+			setLibrary(name.slice(0, slash));
 		}
-		if (typeof next.icon === 'string') {
-			setIconName(next.icon);
-		}
+		setModalOpen(false);
 	}, []);
 
 	const handleCommit = useCallback(() => {
@@ -58,8 +76,8 @@ export function IconSpanEdit({
 		// drops `contentEditable: false` formats with empty innerHTML at save
 		// time). The PHP walker's callback strategy replaces the entire outer
 		// span with the rendered icon SVG, so `%icon%` never reaches the
-		// frontend. A MutationObserver in `preview.ts` injects the live sprite
-		// preview into the editor DOM without touching this saved value.
+		// frontend. `preview.ts` inlines a live SVG preview into the editor
+		// DOM without touching this saved value.
 		onCommit({
 			attributes: {
 				iconLibrary: library,
@@ -74,23 +92,51 @@ export function IconSpanEdit({
 	return (
 		<div
 			className="prc-block-bit-icon-span__editor"
-			style={{ minWidth: 320, padding: 16, maxWidth: 360 }}
+			style={{ minWidth: 280, padding: 16, maxWidth: 360 }}
 		>
-			<IconPicker
-				library={library}
-				icon={iconName || undefined}
-				showPosition={false}
-				onChange={handleChange}
-			/>
+			{selectedIcon?.content ? (
+				<div className="prc-block-bit-icon-span__preview">
+					<RawHTML>{selectedIcon.content}</RawHTML>
+					<p>{selectedIcon.label}</p>
+				</div>
+			) : (
+				<p>
+					{iconName
+						? iconName
+						: __('No icon selected.', 'prc-block-bits')}
+				</p>
+			)}
+			<Button
+				variant="secondary"
+				__next40pxDefaultSize
+				onClick={() => setModalOpen(true)}
+				style={{ marginBottom: 12 }}
+			>
+				{iconName
+					? __('Replace icon', 'prc-block-bits')
+					: __('Choose icon', 'prc-block-bits')}
+			</Button>
+			{isModalOpen && (
+				<IconPickerModal
+					onClose={() => setModalOpen(false)}
+					value={selectedName}
+					onChange={handleSelect}
+				/>
+			)}
 			<Flex justify="flex-end" gap={2} style={{ marginTop: 12 }}>
 				<FlexItem>
-					<Button variant="tertiary" onClick={onCancel}>
+					<Button
+						variant="tertiary"
+						__next40pxDefaultSize
+						onClick={onCancel}
+					>
 						{__('Cancel', 'prc-block-bits')}
 					</Button>
 				</FlexItem>
 				<FlexItem>
 					<Button
 						variant="primary"
+						__next40pxDefaultSize
 						onClick={handleCommit}
 						disabled={!iconName}
 					>

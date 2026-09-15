@@ -6,12 +6,10 @@ Human-oriented API reference: [README.md](README.md).
 
 ## When to use bits
 
-
 | Use **bits**                                                  | Use **block bindings**        |
 | ------------------------------------------------------------- | ----------------------------- |
 | Dynamic fragment **inside** static copy (`…the <bit> group…`) | Entire block field is dynamic |
 | Mid-paragraph / mid-heading                                   | Block-level replacement       |
-
 
 ## Architecture (one minute)
 
@@ -34,14 +32,16 @@ flowchart LR
   save["Saved span in post_content"] --> walk
 ```
 
-
-
 1. **PHP** — Consumer plugins call `register_block_bit()` on `init` (priority `11` is typical). `Assets` projects an allowlisted payload onto `window.prcBlockBits.bits` before the editor script runs.
 2. **Editor boot** — `src/editor/index.ts`: `hydrateFromWindow()` → built-in `registerBlockBit()` overlays → `registerBitFormatType()` (single shared rich-text format).
 3. **Insert** — Toolbar uses `insertObject()` (not `object: true` on the format). Saved markup:
-  ```html
-   <span class="prc-block-bit" data-prc-block-bit="my-plugin/my-bit" data-…="…">fallback text</span>
-  ```
+
+```html
+<span class="prc-block-bit" data-prc-block-bit="my-plugin/my-bit" data-…="…"
+	>fallback text</span
+>
+```
+
 4. **Frontend** — `Walker` (`includes/class-walker.php`) runs at `render_block` priority `100`, early-exits unless content contains `prc-block-bit`, then dispatches **iapi** or **callback** per bit.
 
 There is **no** `@wordpress/data` store for bits — a module-level `Map` in `src/editor/registry/registry.ts` is intentional (static, read-mostly).
@@ -78,29 +78,27 @@ if ( ! function_exists( '\PRC\Platform\Block_Bits\register_block_bit' ) ) {
 
 - Name: `<namespace>/<bit-kebab>` (lowercase, dashes). First registration wins; duplicates `_doing_it_wrong`.
 - `default_text`: same for every request to a URL — no per-user or time-varying values (edge cache).
-- Attribute `type`: `string` | `int` | `hex_color` | `icon_name` | `enum` (see `Registry` in PHP).
+- Attribute `type`: `string` | `int` | `hex_color` | `icon_name` | `enum` (see `Registry` in PHP). `icon_name` allows `collection/name`.
 
 **Examples in-repo**
-
 
 | Plugin                | File                                                               |
 | --------------------- | ------------------------------------------------------------------ |
 | iAPI / state-driven   | `plugins/prc-quiz-political-typology-2026/src/results/results.php` |
 | Callback / attributes | `plugins/prc-block-bits/includes/bits/class-icon-span.php`         |
 
-
 ### 2. Editor overlay (recommended)
 
-PHP projects `label`, `title` (same as label), `category`, `allowedBlockTypes`, `attributes`, `defaultText`. JS overlays add **icon**, **title** override, and optional `**edit`** picker.
+PHP projects `label`, `title` (same as label), `category`, `allowedBlockTypes`, `attributes`, `defaultText`. JS overlays add **icon**, **title** override, and optional `**edit`\*\* picker.
 
 ```ts
 import { registerBlockBit } from '@prc/block-bits';
 
-registerBlockBit( 'my-plugin/my-bit-slug', {
-    title: __( 'My Bit', 'my-plugin' ),
-    icon: someDashicon,
-    edit: MyBitEdit, // only if authors pick attributes before insert
-} );
+registerBlockBit('my-plugin/my-bit-slug', {
+	title: __('My Bit', 'my-plugin'),
+	icon: someDashicon,
+	edit: MyBitEdit, // only if authors pick attributes before insert
+});
 ```
 
 **Load the overlay** from an editor script that runs where authors insert bits (e.g. your block's `index.js`). If the overlay never runs, the bit still works using PHP `label` as the menu title (default icon: `postContent`).
@@ -114,6 +112,7 @@ Implement `BitEditProps` (`onCommit` / `onCancel`). Pattern: `src/editor/builtin
 - Use local `useState` only for **transient** picker UI, not for mirroring committed attributes (RTC-safe).
 - `onCommit({ attributes, innerHTML? })` — toolbar runs `insertObject` with merged attrs.
 - `innerHTML` must be non-empty for `contentEditable: false` formats at save time (see icon-span `%icon%` placeholder).
+- Icon-span opens the core registry picker (`IconPickerModal` in `src/editor/builtins/icon-span/`). Do not import `IconPickerModal` from `@wordpress/block-editor`.
 
 ### 4. iAPI bits
 
@@ -127,19 +126,16 @@ Walker adds directives; editor-saved `default_text` is the fallback when the Int
 
 ## Editor picker UX
 
-
 | Applicable bits | UI                                                 |
 | --------------- | -------------------------------------------------- |
 | ≤ 5             | Inline `Popover` + single menu group               |
 | > 5             | `BitsPickerModal` — category `MenuGroup`s + search |
-
 
 - Uncategorized bits → **General** (`UNCATEGORIZED_LABEL` in `registry.ts`).
 - Modal search: `filterBitGroups()` matches title, label, slug, and category name.
 - Cursor on existing bit → `BitPopover` (Edit / Remove), not the insert picker.
 
 ## Working on this plugin
-
 
 | Path                          | Purpose                                          |
 | ----------------------------- | ------------------------------------------------ |
@@ -154,7 +150,6 @@ Walker adds directives; editor-saved `default_text` is the fallback when the Int
 | `src/settings/`               | Admin settings (disable bits per site)           |
 | `build/editor/`               | Built editor bundle (`prc-block-bits-editor`)    |
 
-
 **Build** (from repo root):
 
 ```bash
@@ -167,8 +162,8 @@ Requires `prc-scripts` active (`Requires Plugins` in main plugin file).
 ## Agent gotchas
 
 1. **Bits ≠ block bindings** — inline RichText only; do not use for whole-block dynamic fields.
-2. `**default_text` and VIP cache** — must not vary by user, role, or clock; callable `default_text` is rejected.
-3. **Format type** — one format for all bits; per-bit data lives in `data-prc-block-bit` + `data-`* attrs. Do not set `object: true` on the format (breaks save HTML); use `insertObject` in the toolbar.
+2. `**default_text` and VIP cache\*\* — must not vary by user, role, or clock; callable `default_text` is rejected.
+3. **Format type** — one format for all bits; per-bit data lives in `data-prc-block-bit` + `data-`\* attrs. Do not set `object: true` on the format (breaks save HTML); use `insertObject` in the toolbar.
 4. **Init order** — `hydrateFromWindow()` before `registerBitFormatType()`; built-in overlays between them (`src/editor/index.ts`).
 5. **Disabled bits** — Settings can remove a bit from the projected payload; `registerBlockBit()` in JS is a no-op if the name is missing from `window.prcBlockBits.bits`.
 6. **Modal categories** — set `category` in PHP (e.g. `'Quiz'` for quiz plugins); affects grouping and search, not render behavior.
@@ -180,4 +175,3 @@ Requires `prc-scripts` active (`Requires Plugins` in main plugin file).
 - [README.md](README.md) — full `register_block_bit()` schema and strategies
 - [docs/development-guidelines.md](../../docs/development-guidelines.md) — platform block patterns
 - Root [AGENTS.md](../../AGENTS.md) — monorepo commands, Playground, Turbo builds
-

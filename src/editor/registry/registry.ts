@@ -81,11 +81,13 @@ declare global {
 		prcBlockBits?: {
 			bits?: Record<string, ServerBitProjection>;
 			/**
-			 * Base URL for sprite SVG files (trailing slash), e.g.
-			 * `https://example.com/wp-content/plugins/prc-icon-library/build/icons/sprites/`
+			 * Base URL for fill sprite SVG files (trailing slash), e.g.
+			 * `https://example.com/wp-content/plugins/prc-icon-library/build/icons/`
 			 * Provided by `Assets::build_localized_payload()` when the
 			 * `prc-icon-library` plugin is active and `PRC_PLATFORM_ICONS_URL`
-			 * is defined.
+			 * is defined. Fill sheets (`prc.svg`, `brands.svg`) live here.
+			 * Editor preview still strips a trailing `sprites/` if an older
+			 * payload includes it.
 			 */
 			iconSpritesUrl?: string;
 		};
