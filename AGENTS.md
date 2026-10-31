@@ -157,7 +157,7 @@ npx turbo build --filter=@prc/block-bits
 npm run start -w @prc/block-bits   # watch editor + settings
 ```
 
-Requires `prc-scripts` active (`Requires Plugins` in main plugin file).
+Requires `prc-shared` active (`Requires Plugins` in main plugin file).
 
 ## Agent gotchas
 

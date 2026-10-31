@@ -33,7 +33,7 @@ The **icon-span** bit prefers `\PRC\Platform\Icons\has_registry_icon()` / `get_r
 ### Default setup
 
 1. Activate **`prc-icon-library`** — defines `PRC_PLATFORM_ICONS_URL` and `PRC_PLATFORM_ICONS_PATH` pointing at `build/icons/` (`prc.svg` and `brands.svg`).
-2. **`prc-scripts`** exposes `\PRC\Platform\Icons\get_icon_as_url( $library, $icon )`, which resolves URLs as `{PRC_PLATFORM_ICONS_URL}{prc|brands}.svg#{icon}`.
+2. **`prc-shared`** exposes `\PRC\Platform\Icons\get_icon_as_url( $library, $icon )`, which resolves URLs as `{PRC_PLATFORM_ICONS_URL}{prc|brands}.svg#{icon}`.
 3. **`prc-block-bits`** localizes `window.prcBlockBits.iconSpritesUrl` (same base URL) for editor fill-sprite previews on icon-span bits.
 4. The icon-span **picker** opens Gutenberg's registry modal (`getEntityRecords('root', 'icon')`). `IconPicker` from `@prc/components` is no longer used here.
 
@@ -57,7 +57,7 @@ To serve icons from your own plugin (or replace the default fill sprites):
 3. **Editor index** — Regenerate `@prc/icons`’s `icon-library-index.json` so `IconPicker` lists your libraries and icon names:
 
     ```bash
-    node plugins/prc-scripts/includes/scripts/src/@prc/icons/bin/build-index.js
+    node plugins/prc-shared/includes/scripts/src/@prc/icons/bin/build-index.js
     npx turbo build --filter=@prc/icons
     ```
 

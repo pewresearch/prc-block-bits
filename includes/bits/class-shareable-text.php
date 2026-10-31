@@ -151,7 +151,7 @@ class Shareable_Text {
 	}
 
 	/**
-	 * Decorative platform icon via `\PRC\Platform\Icons\render()` (prc-scripts).
+	 * Decorative platform icon via `\PRC\Platform\Icons\render()` (prc-shared).
 	 *
 	 * Wrapped with `aria-hidden="true"` so the link text remains the sole
 	 * accessible name. Returns empty string when icons are unavailable.
